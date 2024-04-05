@@ -173,7 +173,22 @@ public class SimpleListExpt {
     pen.println();
   } // expt4(PrintWriter, SimpleList<String>, int)
 
+  static void expt5(PrintWriter pen, SimpleList<String> lst) throws Exception {
+    pen.println("Experiment 5: Remove random elements, moving backwards.");
+    addStrings(pen, lst, new String[] {"A", "B", "C", "D", "E", "F", "G"});
+    removeBackwardExpt(pen, lst, (str) -> rand.nextInt(2) == 0);
+    pen.println();
+  } // expt3(PrintWriter, SimpleList<String>
+
+  static void expt6(PrintWriter pen, SimpleList<String> lst) throws Exception {
+    pen.println("Experiment 6: Remove alternating elements, moving backwards.");
+    final Counter counter = new Counter();
+    addStrings(pen, lst, new String[] {"A", "B", "C", "D", "E", "F", "G"});
+    removeBackwardExpt(pen, lst, (str) -> (counter.get() % 2) == 0);
+    pen.println();
+  } // expt2(PrintWriter, SimpleList<String>)
 } // class SimpleListExpt
+
 
 /**
  * A simple counter.
