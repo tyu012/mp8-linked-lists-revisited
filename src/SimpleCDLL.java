@@ -78,9 +78,12 @@ public class SimpleCDLL<T> implements SimpleList<T> {
 
       /**
        * The cursor is between neighboring values, so we start links
-       * to the previous and next value..
+       * to the previous and next value.
+       * 
+       * Note the special case of the empty list: The next field has a null pointer.
+       * This is the only special case of the SimpleCDLL.
        */
-      Node2<T> prev = null;
+      Node2<T> prev = SimpleCDLL.this.dummy;
       Node2<T> next = SimpleCDLL.this.front;
 
       /**
@@ -88,6 +91,17 @@ public class SimpleCDLL<T> implements SimpleList<T> {
        * null when there is no such value.
        */
       Node2<T> update = null;
+
+      /**
+       * The number of changes of the SimpleCDLL at the time of this iterator object's creation,
+       * or when this iterator last mutated the SimpleCDLL.
+       * 
+       * If this.numChanges != SimpleCDLL.this.numChanges, throw a ConcurrentModificationException
+       * when modifying the SimpleCDLL.
+       * 
+       * This field is necessary to support fail fast.
+       */
+      long numChanges = SimpleCDLL.this.numChanges;
 
       // +---------+-------------------------------------------------------
       // | Methods |
