@@ -170,9 +170,9 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // prevIndex
 
       public T previous() throws NoSuchElementException {
-        if (!this.hasPrevious())
+        if (!this.hasPrevious()) {
           throw new NoSuchElementException();
-
+        }
 
         // Identify the node to update
         this.update = this.prev;
