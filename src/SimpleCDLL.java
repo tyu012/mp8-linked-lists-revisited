@@ -108,20 +108,20 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       // +---------+
 
       public void add(T val) throws UnsupportedOperationException {
-        // Special case: The list is empty)
-        if (SimpleCDLL.this.front == null) {
-          SimpleCDLL.this.front = new Node2<T>(val);
-          this.prev = SimpleCDLL.this.front;
-        } // empty list
-        // Special case: At the front of a list
-        else if (prev == null) {
-          this.prev = this.next.insertBefore(val);
-          SimpleCDLL.this.front = this.prev;
-        } // front of list
-        // Normal case
+        // Check list has not been changed by other iterators
+        if (this.numChanges != SimpleCDLL.this.numChanges) {
+          throw new ConcurrentModificationException();
+        }
+
+        // Add a node
+        // Edge case: list is empty
+        if (this.prev == SimpleCDLL.this.dummy && this.next == null) {
+          this.next = new Node2<T>(SimpleCDLL.this.dummy, val, SimpleCDLL.this.dummy);
+        }
+        // Normal case: list is not empty
         else {
           this.prev = this.prev.insertAfter(val);
-        } // normal case
+        }
 
         // Note that we cannot update
         this.update = null;
@@ -132,6 +132,10 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         // Update the position.  (See SimpleArrayList.java for more of
         // an explanation.)
         ++this.pos;
+
+        // Update numChanges.
+        ++this.numChanges;
+        ++SimpleCDLL.this.numChanges;
       } // add(T)
 
       public boolean hasNext() {
