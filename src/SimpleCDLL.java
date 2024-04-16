@@ -113,6 +113,11 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         // Add a node
         this.prev = this.prev.insertAfter(val);
 
+        // Update the front node
+        if (this.prev.prev == SimpleCDLL.this.dummy) {
+          SimpleCDLL.this.front = SimpleCDLL.this.dummy.next;
+        }
+
         // Note that we cannot update
         this.update = null;
 
