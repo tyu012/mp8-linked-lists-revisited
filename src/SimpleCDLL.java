@@ -49,10 +49,13 @@ public class SimpleCDLL<T> implements SimpleList<T> {
    * Create an empty list.
    */
   public SimpleCDLL() {
-    this.front = null;
     this.size = 0;
     this.dummy = new Node2<T>(null);
+    this.front = this.dummy;
     this.numChanges = 0;
+
+    this.dummy.next = this.dummy;
+    this.dummy.prev = this.dummy;
   } // SimpleDLL
 
   // +-----------+---------------------------------------------------------
@@ -79,9 +82,6 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       /**
        * The cursor is between neighboring values, so we start links
        * to the previous and next value.
-       * 
-       * Note the special case of the empty list: The next field has a null pointer.
-       * This is the only special case of the SimpleCDLL.
        */
       Node2<T> prev = SimpleCDLL.this.dummy;
       Node2<T> next = SimpleCDLL.this.front;
@@ -108,20 +108,10 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       // +---------+
 
       public void add(T val) throws UnsupportedOperationException {
-        // Check list has not been changed by other iterators
-        if (this.numChanges != SimpleCDLL.this.numChanges) {
-          throw new ConcurrentModificationException();
-        }
+        checkConcurrentModification();
 
         // Add a node
-        // Edge case: list is empty
-        if (this.prev == SimpleCDLL.this.dummy && this.next == null) {
-          this.next = new Node2<T>(SimpleCDLL.this.dummy, val, SimpleCDLL.this.dummy);
-        }
-        // Normal case: list is not empty
-        else {
-          this.prev = this.prev.insertAfter(val);
-        }
+        this.prev = this.prev.insertAfter(val);
 
         // Note that we cannot update
         this.update = null;
@@ -139,14 +129,17 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // add(T)
 
       public boolean hasNext() {
+        checkConcurrentModification();
         return (this.pos < SimpleCDLL.this.size);
       } // hasNext()
 
       public boolean hasPrevious() {
+        checkConcurrentModification();
         return (this.pos > 0);
       } // hasPrevious()
 
       public T next() {
+        checkConcurrentModification();
         if (!this.hasNext()) {
          throw new NoSuchElementException();
         } // if
@@ -162,14 +155,17 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // next()
 
       public int nextIndex() {
+        checkConcurrentModification();
         return this.pos;
       } // nextIndex()
 
       public int previousIndex() {
+        checkConcurrentModification();
         return this.pos - 1;
       } // prevIndex
 
       public T previous() throws NoSuchElementException {
+        checkConcurrentModification();
         if (!this.hasPrevious()) {
           throw new NoSuchElementException();
         }
@@ -188,6 +184,7 @@ public class SimpleCDLL<T> implements SimpleList<T> {
 
       public void remove() {
         // Sanity check
+        checkConcurrentModification();
         if (this.update == null) {
           throw new IllegalStateException();
         } // if
@@ -215,6 +212,7 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       } // remove()
 
       public void set(T val) {
+        checkConcurrentModification();
         // Sanity check
         if (this.update == null) {
           throw new IllegalStateException();
@@ -224,6 +222,19 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         // Note that no more updates are possible
         this.update = null;
       } // set(T)
+
+      /**
+       * Check if list has not been changed by other iterators. This implements the "fail fast"
+       * strategy.
+       * 
+       * @throws ConcurrentModificationException if other iterators have modified list.
+       */
+      public void checkConcurrentModification() {
+        // Check list has not been changed by other iterators
+        if (this.numChanges != SimpleCDLL.this.numChanges) {
+          throw new ConcurrentModificationException();
+        }
+      }
     };
   } // listIterator()
 
