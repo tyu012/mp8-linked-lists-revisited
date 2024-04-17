@@ -3,7 +3,6 @@ import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.function.Predicate;
-import org.junit.jupiter.api.DisplayNameGenerator.Simple;
 
 /**
  * Some simple experiments with SimpleLists
