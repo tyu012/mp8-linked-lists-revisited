@@ -1,7 +1,9 @@
 import java.io.PrintWriter;
+import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.function.Predicate;
+import org.junit.jupiter.api.DisplayNameGenerator.Simple;
 
 /**
  * Some simple experiments with SimpleLists
@@ -135,6 +137,33 @@ public class SimpleListExpt {
     } // for i
   } // randomWalkRemove(n)
 
+  /**
+   * Tries to add two elements using two iterators, both created in the beginning of method call.
+   * 
+   * Second add operation should fail if the list fails fast.
+   */
+  static void failFastExpt(PrintWriter pen, SimpleList<String> lst) {
+    ListIterator<String> lit1 = lst.listIterator();
+    ListIterator<String> lit2 = lst.listIterator();
+    
+    pen.println("Adding first element using iterator 1... ");
+    lit1.add("should work");
+    printList(pen, lst);
+
+    try {
+      pen.println("Adding second element using iterator 2... ");
+      lit2.add("should NOT work");
+      printList(pen, lst);
+      pen.println("List does not fail fast.");
+    } catch (ConcurrentModificationException e) {
+      pen.println("List fails fast.");
+      pen.println(e);
+    } catch (Exception e) {
+      pen.println("List does not fail fast.");
+      pen.println(e);
+    }
+  }
+
   // +-------------+-------------------------------------------------
   // | Experiments |
   // +-------------+
@@ -178,7 +207,7 @@ public class SimpleListExpt {
     addStrings(pen, lst, new String[] {"A", "B", "C", "D", "E", "F", "G"});
     removeBackwardExpt(pen, lst, (str) -> rand.nextInt(2) == 0);
     pen.println();
-  } // expt3(PrintWriter, SimpleList<String>
+  } // expt5(PrintWriter, SimpleList<String>
 
   static void expt6(PrintWriter pen, SimpleList<String> lst) throws Exception {
     pen.println("Experiment 6: Remove alternating elements, moving backwards.");
@@ -186,7 +215,12 @@ public class SimpleListExpt {
     addStrings(pen, lst, new String[] {"A", "B", "C", "D", "E", "F", "G"});
     removeBackwardExpt(pen, lst, (str) -> (counter.get() % 2) == 0);
     pen.println();
-  } // expt2(PrintWriter, SimpleList<String>)
+  } // expt6(PrintWriter, SimpleList<String>)
+
+  static void expt7(PrintWriter pen, SimpleList<String> lst) throws Exception {
+    pen.println("Experiment 7: Fail fast test.");
+    failFastExpt(pen, lst);
+  }
 } // class SimpleListExpt
 
 

@@ -12,5 +12,6 @@ public class SDLLExpt {
     SimpleListExpt.expt4(pen, new SimpleDLL<String>(), 3);
     SimpleListExpt.expt5(pen, new SimpleDLL<String>());
     SimpleListExpt.expt6(pen, new SimpleDLL<String>());
+    SimpleListExpt.expt7(pen, new SimpleDLL<String>());
   } // main(String[]
 } // SDLLExpt
