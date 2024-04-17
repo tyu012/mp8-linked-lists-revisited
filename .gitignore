@@ -7,3 +7,6 @@
 
 # Eclipse stuff
 bin
+
+# Tests provided by instructor
+src/SimpleCDLLTests.java
