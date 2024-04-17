@@ -11,6 +11,11 @@ Tim Yu
 Revisiting our implementation of doubly-linked lists, considering the effects of
 a well-known variant.
 
+Showing that a circular doubly-linked list with a dummy node reduces the number
+of edge cases we need to consider in the iterator code.
+
+Implementing a "fail-fast" strategy for list iterators.
+
 ## Acknowledgements
 
 This mini-project contains files from the doubly-linked lists and circularly-linked
