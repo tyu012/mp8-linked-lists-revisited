@@ -230,13 +230,17 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         this.update = null;
       } // set(T)
 
+      // +----------------+------------------------------------------------------------------------
+      // | Helper Methods |
+      // +----------------+
+
       /**
        * Check if list has not been changed by other iterators. This implements the "fail fast"
        * strategy.
        * 
        * @throws ConcurrentModificationException if other iterators have modified list.
        */
-      public void checkConcurrentModification() {
+      void checkConcurrentModification() {
         // Check list has not been changed by other iterators
         if (this.numChanges != SimpleCDLL.this.numChanges) {
           throw new ConcurrentModificationException();
@@ -246,7 +250,7 @@ public class SimpleCDLL<T> implements SimpleList<T> {
       /**
        * Increment `this.numChanges` and `SimpleCDLL.this.numChanges` by 1.
        */
-      public void incrementNumChanges() {
+      void incrementNumChanges() {
         this.numChanges++;
         SimpleCDLL.this.numChanges++;
       }
