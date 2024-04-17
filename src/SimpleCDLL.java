@@ -18,11 +18,6 @@ public class SimpleCDLL<T> implements SimpleList<T> {
   // +--------+
 
   /**
-   * The front of the list
-   */
-  Node2<T> front;
-
-  /**
    * The number of values in the list.
    */
   int size;
@@ -51,12 +46,25 @@ public class SimpleCDLL<T> implements SimpleList<T> {
   public SimpleCDLL() {
     this.size = 0;
     this.dummy = new Node2<T>(null);
-    this.front = this.dummy;
     this.numChanges = 0;
 
     this.dummy.next = this.dummy;
     this.dummy.prev = this.dummy;
   } // SimpleDLL
+
+  // +----------------+----------------------------------------------------
+  // | Helper Methods |
+  // +----------------+
+
+  /**
+   * Returns the node representing the front of the list, which is the node
+   * following the dummy node.
+   * 
+   * Note that when the list is empty, the front node is the dummy node.
+   */
+  Node2<T> front() {
+    return this.dummy.next;
+  }
 
   // +-----------+---------------------------------------------------------
   // | Iterators |
@@ -84,7 +92,7 @@ public class SimpleCDLL<T> implements SimpleList<T> {
        * to the previous and next value.
        */
       Node2<T> prev = SimpleCDLL.this.dummy;
-      Node2<T> next = SimpleCDLL.this.front;
+      Node2<T> next = SimpleCDLL.this.front();
 
       /**
        * The node to be updated by remove or set.  Has a value of
@@ -113,11 +121,6 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         // Add a node
         this.prev = this.prev.insertAfter(val);
 
-        // Update the front node
-        if (this.prev.prev == SimpleCDLL.this.dummy) {
-          SimpleCDLL.this.front = SimpleCDLL.this.dummy.next;
-        }
-
         // Note that we cannot update
         this.update = null;
 
@@ -129,8 +132,7 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         ++this.pos;
 
         // Update numChanges.
-        ++this.numChanges;
-        ++SimpleCDLL.this.numChanges;
+        incrementNumChanges();
       } // add(T)
 
       public boolean hasNext() {
@@ -203,21 +205,17 @@ public class SimpleCDLL<T> implements SimpleList<T> {
           --this.pos;
         } // if
 
-        // Update the front
-        if (SimpleCDLL.this.front == this.update) {
-          SimpleCDLL.this.front = this.update.next;
-        } // if
-
         // Do the real work
         this.update.remove();
+
+        // Reduce the size of list
         --SimpleCDLL.this.size;
 
         // Note that no more updates are possible
         this.update = null;
 
         // Update numChanges
-        this.numChanges++;
-        SimpleCDLL.this.numChanges++;
+        incrementNumChanges();
       } // remove()
 
       public void set(T val) {
@@ -243,6 +241,14 @@ public class SimpleCDLL<T> implements SimpleList<T> {
         if (this.numChanges != SimpleCDLL.this.numChanges) {
           throw new ConcurrentModificationException();
         }
+      }
+
+      /**
+       * Increment `this.numChanges` and `SimpleCDLL.this.numChanges` by 1.
+       */
+      public void incrementNumChanges() {
+        this.numChanges++;
+        SimpleCDLL.this.numChanges++;
       }
     };
   } // listIterator()
